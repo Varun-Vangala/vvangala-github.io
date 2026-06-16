@@ -153,7 +153,7 @@
       </div>
       <button class="btn toggle on" id="countToggle">🔊 Click on</button>
     </div>
-    <p class="hint">High click = beat 1 = your switch point. Watch <b>Up next</b> and pre-shape the change. In Drill the key &amp; progression reroll after each full loop.</p>
+    <p class="hint">High click = beat 1 = your switch point. Watch <b>Up next</b> and pre-shape the change. In Drill, hit <b>🎲 New random</b> to roll a fresh key &amp; progression.</p>
   </div>
 
   <div class="panel">
@@ -613,10 +613,7 @@ function click(time,accent){
 function onChordAdvance(){
   cur=(cur+1)%chordNames.length;
   renderAll(); flash();
-  if(cur===0){                       // a full loop just completed
-    if(routine) routineLoopDone();
-    else if(mode==="drill") rollRandom();
-  }
+  if(cur===0 && routine) routineLoopDone();   // routines auto-advance; drill only rerolls on user input
 }
 function scheduler(){
   while(nextTime<actx.currentTime+0.12){
@@ -653,7 +650,7 @@ function setMode(m,silent){
   $("practiceCtrls").classList.toggle("hide",m!=="practice");
   $("drillCtrls").classList.toggle("hide",m!=="practice"?false:true);
   $("modeHint").textContent = m==="drill"
-    ? "Drill rerolls a new random key and progression after every full loop. Tick the box to focus on exotic chords."
+    ? "Drill loops one random key + progression. Hit 🎲 New random whenever you want a fresh one. Tick the box to focus on exotic chords."
     : "Pick any progression and transpose it to any key. Use the voicing plan to drill position shifts.";
   if(m==="drill" && !silent){ rollRandom(); }
   if(m==="practice" && !silent){ buildProgression(); renderAll(); }
