@@ -280,14 +280,14 @@ function ordinal(n){ if(n>=11&&n<=13)return"th"; const d=n%10; return d===1?"st"
 function buildVoicings(name){
   const {pc,q}=parseChord(name);
   const out=[]; const seen=new Set();
-  const push=(frets,f,label)=>{
+  const push=(frets,f,label,isOpen)=>{
     if(frets.some(x=>x>15)) return;
     const key=frets.join(",");
     if(seen.has(key)) return; seen.add(key);
-    out.push({frets,fingers:f,label});
+    out.push({frets,fingers:f,label,open:!!isOpen});
   };
   const lib=OPEN_LIB[pc+":"+q];
-  if(lib) push(lib.frets.slice(),lib.f.slice(),"Open position");
+  if(lib) push(lib.frets.slice(),lib.f.slice(),"Open position",true);
   (FORMS[q]||[]).forEach(form=>{
     const {frets,base}=placeForm(pc,form);
     const pos=Math.min(...frets.filter(x=>x>0));
@@ -438,7 +438,7 @@ function applyPlan(plan){
   choice=voi.map((vs,i)=>{
     const n=vs.length;
     if(plan==="easy") return 0;
-    if(plan==="barre"){ const k=vs.findIndex(v=>posOf(v)>0); return k<0?0:k; }
+    if(plan==="barre"){ const k=vs.findIndex(v=>!v.open); return k<0?n-1:k; }
     if(plan==="zigzag") return (i%2===0)?0:n-1;
     const t=L>1?i/(L-1):0;
     const idx=Math.round((plan==="descend"?1-t:t)*(n-1));
